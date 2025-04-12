@@ -1,11 +1,15 @@
 import React from 'react'
 import './Index.css'
+import Cadastro from   './pages/cadastro/index.tsx'
 
 function App() {
   return (
     <>
-      <h1 className='p-4 text-center text-xl font-bold text-amber-500'>Este é o início de um projeto de uma aplicação web para gerenciamento de uma barvearia!
-      </h1>
+      <div className="App">
+        <Cadastro />
+      </div>
+      <div className="App"></div>
+       
     </>
   )
 }
