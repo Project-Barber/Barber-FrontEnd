@@ -1,9 +1,8 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { z } from 'zod'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import InputMask from 'react-input-mask'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,13 +15,12 @@ import {
 import { Label } from '@/components/ui/label'
 import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
-import { MdVisibility, MdVisibilityOff } from "react-icons/md";
-import apiClient from '@/apis/apiClient'
-import  PhoneInput  from '@/components/ui/inputPhone'
-import  DateInputProps  from '@/components/ui/inputDate'
-import { on } from 'events'
+import { MdVisibility, MdVisibilityOff } from "react-icons/md"
+import PhoneInput from '@/components/ui/inputPhone'
+import DateInputProps from '@/components/ui/inputDate'
+import { useUsers } from '../../hooks/user-hooks'
 
-const schema = z.object({
+const createUserSchema = z.object({
   name: z.string().min(2, 'Digite um nome válido'),
   email: z.string().email('Email inválido'),
   phone: z.string().min(11, 'Digite um telefone válido'),
@@ -37,69 +35,75 @@ const schema = z.object({
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof createUserSchema>
 
 const Cadastro: React.FC = () => {
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(createUserSchema),
   })
 
-    const onSubmit = async (data: FormData) => {
-      try {
-        // Combinar os campos em uma única string
-        const enderecoCompleto = `${data.rua || ''}, ${data.bairro || ''}, ${data.cidade || ''}, ${data.estado || ''}, CEP: ${data.cep || ''}`;
-    
-        // Adicionar o endereço combinado aos dados enviados
-        const dadosCompletos = { ...data, enderecoCompleto };
-    
-        // Enviando os dados do formulário para o backend
-        const response = await apiClient.post('/cadastrar', dadosCompletos);
-        toast.success('Cadastro realizado com sucesso!');
-        console.log('Resposta do backend:', response.data);
-      } catch (error) {
-        toast.error('Erro ao enviar dados para o backend.');
-        console.error('Erro ao cadastrar usuário:', error);
+  const { createUser, loading } = useUsers()
+  const [isVisible, setIsVisible] = useState(false)
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      const userData = {
+        nome: data.name,
+        email: data.email,
+        telefone: data.phone,
+        data_nascimento: data.date_of_birth,
+        senha: data.password,
+        endereco: JSON.stringify({
+          cep: data.cep,
+          rua: data.rua,
+          bairro: data.bairro,
+          cidade: data.cidade,
+          estado: data.estado,
+        }),
       }
-    };
-  
+      const result = await createUser(userData)
+      if (result) {
+        console.log("Usuário criado com sucesso", result)
+        toast.success("Usuário criado com sucesso!")
+      }
+    } catch (error) {
+      console.error("Erro ao criar usuário", error)
+      toast.error("Erro ao criar usuário")
+    }
+  }
 
   const onError = (errors: any) => {
     Object.values(errors).forEach((error: any) => {
       toast.error(error.message || 'Erro ao preencher o formulário')
     })
   }
-  const [isVisible, setIsVisible] = React.useState(false);
+
   const handlePasswordVisibility = () => {
-    setIsVisible(!isVisible);
-    console.log(isVisible);
+    setIsVisible(prev => !prev)
   }
 
-
   return (
-    <div className="flex justify-center items-center h-full py-6 bg-white select-none ">
+    <div className="flex justify-center items-center h-full py-6 bg-white select-none">
       <Toaster position="top-right" />
 
-      <Card className="flex flex-row h-[800px]  shadow-md rounded-l-md">
+      <Card className="flex flex-row h-[800px] shadow-md rounded-l-md">
         <div className="w-[450px] h-full relative">
           <img
             src="src/assets/pexels-thgusstavo-2040189 1.png"
-            alt="logo"
-            className="w-full h-full object-cover rounded-l-md "
+            alt="Imagem de fundo"
+            className="w-full h-full object-cover rounded-l-md"
             draggable="false"
-
           />
           <img
-          src='src/assets/paulista-logo-branco-removebg-preview 2.png'
-          alt="logo"
-          className=" top-20 left-25 w-70 h-70 object-cover absolute"  
+            src="src/assets/paulista-logo-branco-removebg-preview 2.png"
+            alt="Logo"
+            className="top-20 left-25 w-70 h-70 object-cover absolute"
           />
         </div>
-
 
         <div className="flex flex-col justify-between px-6 py-4 w-[550px] h-full">
           <CardHeader className="flex flex-col items-center text-center">
@@ -123,13 +127,12 @@ const Cadastro: React.FC = () => {
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="phone">Telefone</Label>
-                  <PhoneInput></PhoneInput>
-                
+                <PhoneInput {...register('phone')} />
               </div>
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="date_of_birth">Data de Nascimento</Label>
-                <DateInputProps></DateInputProps>
+                <DateInputProps {...register('date_of_birth')} />
               </div>
 
               <div className="flex flex-col space-y-1.5">
@@ -168,11 +171,10 @@ const Cadastro: React.FC = () => {
                   type={isVisible ? "text" : "password"}
                   {...register('password')}
                 />
-
                 <button
                   onClick={handlePasswordVisibility}
                   type="button"
-                  className="absolute right-3 top-[30px] hover:cursor-pointer"
+                  className="absolute right-3 top-[30px]"
                 >
                   {isVisible ? <MdVisibilityOff /> : <MdVisibility />}
                 </button>
@@ -181,17 +183,17 @@ const Cadastro: React.FC = () => {
               <div className="flex flex-col items-center space-y-0.5">
                 <Button
                   type="submit"
-                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] hover:cursor-pointer hover:text-gray-300"
+                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white"
                 >
                   Cadastre-se
                 </Button>
                 <h4>ou</h4>
                 <Button
-                onClick={() => handleSubmit(onSubmit, onError)()}
                   type="button"
-                  className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100 hover:cursor-pointer"
+                  className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100"
+                  onClick={() => handleSubmit(onSubmit, onError)()}
                 >
-                  <FcGoogle />
+                  <FcGoogle  />
                   Cadastrar com Google
                 </Button>
               </div>
