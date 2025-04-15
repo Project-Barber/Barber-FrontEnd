@@ -16,6 +16,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 const schema = z.object({
   name: z.string().min(2, 'Digite um nome válido'),
@@ -54,19 +55,33 @@ const Cadastro: React.FC = () => {
       toast.error(error.message || 'Erro ao preencher o formulário')
     })
   }
+  const [isVisible, setIsVisible] = React.useState(false);
+  const handlePasswordVisibility = () => {
+    setIsVisible(!isVisible);
+    console.log(isVisible);
+  }
+
 
   return (
-    <div className="flex justify-center items-center h-full py-6 bg-white">
+    <div className="flex justify-center items-center h-full py-6 bg-white select-none ">
       <Toaster position="top-right" />
 
-      <Card className="flex flex-row h-[800px] rounded-l-none shadow-md">
-        <div className="w-[450px] h-full">
+      <Card className="flex flex-row h-[800px]  shadow-md rounded-l-md">
+        <div className="w-[450px] h-full relative">
           <img
             src="src/assets/pexels-thgusstavo-2040189 1.png"
             alt="logo"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-l-md "
+            draggable="false"
+
+          />
+          <img
+          src='src/assets/paulista-logo-branco-removebg-preview 2.png'
+          alt="logo"
+          className=" top-20 left-25 w-70 h-70 object-cover absolute"  
           />
         </div>
+
 
         <div className="flex flex-col justify-between px-6 py-4 w-[550px] h-full">
           <CardHeader className="flex flex-col items-center text-center">
@@ -162,14 +177,22 @@ const Cadastro: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col space-y-1.5">
+              <div className="flex flex-col space-y-1.5 relative">
                 <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   placeholder="********"
-                  type="password"
+                  type={isVisible ? "text" : "password"}
                   {...register('password')}
                 />
+
+                <button
+                  onClick={handlePasswordVisibility}
+                  type="button"
+                  className="absolute right-3 top-[30px] hover:cursor-pointer"
+                >
+                  {isVisible ? <MdVisibilityOff /> : <MdVisibility />}
+                </button>
               </div>
 
               <div className="flex flex-col items-center space-y-0.5">
