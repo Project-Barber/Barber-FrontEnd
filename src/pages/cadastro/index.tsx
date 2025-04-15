@@ -17,16 +17,20 @@ import { Label } from '@/components/ui/label'
 import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import apiClient from '@/apis/apiClient'
+import  PhoneInput  from '@/components/ui/inputPhone'
+import  DateInputProps  from '@/components/ui/inputDate'
+import { on } from 'events'
 
 const schema = z.object({
   name: z.string().min(2, 'Digite um nome válido'),
   email: z.string().email('Email inválido'),
   phone: z.string().min(11, 'Digite um telefone válido'),
-  cep: z.string().min(8, 'CEP deve ter 8 dígitos'),
-  rua: z.string().min(2, 'Rua obrigatória'),
-  bairro: z.string().min(2, 'Bairro obrigatório'),
-  cidade: z.string().min(2, 'Cidade obrigatória'),
-  estado: z.string().min(2, 'Estado obrigatório'),
+  cep: z.string().optional(),
+  rua: z.string().optional(),
+  bairro: z.string().optional(),
+  cidade: z.string().optional(),
+  estado: z.string().optional(),
   date_of_birth: z
     .string()
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato dd/mm/yyyy'),
@@ -45,10 +49,24 @@ const Cadastro: React.FC = () => {
     resolver: zodResolver(schema),
   })
 
-  const onSubmit = (data: FormData) => {
-    toast.success('Dados enviados com sucesso!')
-    console.log('Dados enviados:', data)
-  }
+    const onSubmit = async (data: FormData) => {
+      try {
+        // Combinar os campos em uma única string
+        const enderecoCompleto = `${data.rua || ''}, ${data.bairro || ''}, ${data.cidade || ''}, ${data.estado || ''}, CEP: ${data.cep || ''}`;
+    
+        // Adicionar o endereço combinado aos dados enviados
+        const dadosCompletos = { ...data, enderecoCompleto };
+    
+        // Enviando os dados do formulário para o backend
+        const response = await apiClient.post('/cadastrar', dadosCompletos);
+        toast.success('Cadastro realizado com sucesso!');
+        console.log('Resposta do backend:', response.data);
+      } catch (error) {
+        toast.error('Erro ao enviar dados para o backend.');
+        console.error('Erro ao cadastrar usuário:', error);
+      }
+    };
+  
 
   const onError = (errors: any) => {
     Object.values(errors).forEach((error: any) => {
@@ -105,48 +123,13 @@ const Cadastro: React.FC = () => {
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="phone">Telefone</Label>
-                <Controller
-                  control={control}
-                  name="phone"
-                  render={({ field }) => (
-                    <InputMask
-                      mask="(99) 99999-9999"
-                      value={field.value}
-                      onChange={field.onChange}
-                    >
-                      {(inputProps: any) => (
-                        <Input
-                          {...inputProps}
-                          id="phone"
-                          placeholder="(99) 99999-9999"
-                        />
-                      )}
-                    </InputMask>
-                  )}
-                />
+                  <PhoneInput></PhoneInput>
+                
               </div>
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="date_of_birth">Data de Nascimento</Label>
-                <Controller
-                  control={control}
-                  name="date_of_birth"
-                  render={({ field }) => (
-                    <InputMask
-                      mask="99/99/9999"
-                      value={field.value}
-                      onChange={field.onChange}
-                    >
-                      {(inputProps: any) => (
-                        <Input
-                          {...inputProps}
-                          id="date_of_birth"
-                          placeholder="dd/mm/aaaa"
-                        />
-                      )}
-                    </InputMask>
-                  )}
-                />
+                <DateInputProps></DateInputProps>
               </div>
 
               <div className="flex flex-col space-y-1.5">
@@ -204,6 +187,7 @@ const Cadastro: React.FC = () => {
                 </Button>
                 <h4>ou</h4>
                 <Button
+                onClick={() => handleSubmit(onSubmit, onError)()}
                   type="button"
                   className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100 hover:cursor-pointer"
                 >
