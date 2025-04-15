@@ -33,6 +33,7 @@ const createUserSchema = z.object({
     .string()
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato dd/mm/yyyy'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
+  
 })
 
 type FormData = z.infer<typeof createUserSchema>
@@ -127,12 +128,13 @@ const Cadastro: React.FC = () => {
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="phone">Telefone</Label>
-                <PhoneInput {...register('phone')} />
+                <Input {...register('phone')} />
+                
               </div>
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="date_of_birth">Data de Nascimento</Label>
-                <DateInputProps {...register('date_of_birth')} />
+                <Input {...register('date_of_birth')} />
               </div>
 
               <div className="flex flex-col space-y-1.5">
