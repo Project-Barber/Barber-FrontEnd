@@ -16,9 +16,9 @@ import { Label } from '@/components/ui/label'
 import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
 import { MdVisibility, MdVisibilityOff } from "react-icons/md"
-import PhoneInput from '@/components/ui/inputPhone'
-import DateInputProps from '@/components/ui/inputDate'
 import { useUsers } from '../../hooks/user-hooks'
+import { maskPhone, maskDate } from '@/utils/masks'
+
 
 const createUserSchema = z.object({
   name: z.string().min(2, 'Digite um nome válido'),
@@ -33,7 +33,7 @@ const createUserSchema = z.object({
     .string()
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, 'Data deve estar no formato dd/mm/yyyy'),
   password: z.string().min(6, 'A senha deve ter pelo menos 6 caracteres'),
-  
+
 })
 
 type FormData = z.infer<typeof createUserSchema>
@@ -43,12 +43,17 @@ const Cadastro: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue, 
   } = useForm<FormData>({
     resolver: zodResolver(createUserSchema),
   })
 
+
   const { createUser, loading } = useUsers()
   const [isVisible, setIsVisible] = useState(false)
+  const [phone, setPhone] = useState('')
+  const [dateOfBirth, setDateOfBirth] = useState('')
+
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -128,14 +133,35 @@ const Cadastro: React.FC = () => {
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="phone">Telefone</Label>
-                <Input {...register('phone')} />
-                
+                <Input
+                  id="phone"
+                  placeholder="(xx) xxxxx-xxxx"
+                  type="tel"  
+                  value={phone}
+                  {...register('phone')}
+                  onChange={(e) => {
+                    const masked = maskPhone(e.target.value)
+                    setPhone(masked)
+                    setValue('phone', masked) // Atualiza o valor no formulário
+                  }}
+                />
               </div>
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="date_of_birth">Data de Nascimento</Label>
-                <Input {...register('date_of_birth')} />
+                <Input
+                  id="date_of_birth"
+                  placeholder='dd/mm/yyyy'
+                  value={dateOfBirth}
+                  {...register('date_of_birth')}
+                  onChange={(e) => {
+                    const masked = maskDate(e.target.value)
+                    setDateOfBirth(masked)
+                    setValue('date_of_birth', masked)
+                  }}
+                />
               </div>
+
 
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="cep">CEP</Label>
@@ -195,7 +221,7 @@ const Cadastro: React.FC = () => {
                   className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100"
                   onClick={() => handleSubmit(onSubmit, onError)()}
                 >
-                  <FcGoogle  />
+                  <FcGoogle />
                   Cadastrar com Google
                 </Button>
               </div>
