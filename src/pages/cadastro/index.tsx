@@ -97,7 +97,7 @@ const Cadastro: React.FC = () => {
       <Toaster position="top-right" />
 
       <Card className="flex flex-row h-[800px] shadow-md rounded-l-md">
-        <div className="w-[450px] h-full relative">
+        <div className="w-[450px] h-full relative hidden sm:flex">
           <img
             src="src/assets/pexels-thgusstavo-2040189 1.png"
             alt="Imagem de fundo"
@@ -111,7 +111,7 @@ const Cadastro: React.FC = () => {
           />
         </div>
 
-        <div className="flex flex-col justify-between px-6 py-4 w-[550px] h-full">
+        <div className="flex flex-col justify-between px-6 py-4 w-full max-w-[550px] h-full">
           <CardHeader className="flex flex-col items-center text-center">
             <CardTitle className="text-lg font-bold">Cadastre-se</CardTitle>
             <CardDescription className="text-muted-foreground max-w-xs">
