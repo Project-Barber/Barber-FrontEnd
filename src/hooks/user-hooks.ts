@@ -20,7 +20,7 @@ export const useUsers = () => {
     setError(null);
 
     try {
-      const response = await api.post<UserType>("/users", user);
+      const response = await api.post<UserType>("/usuarios/cadastrar", user);
       create(response.data);
       return response.data;
     } catch (err) {
@@ -45,6 +45,7 @@ export const useUsers = () => {
       setLoading(false);
     }
   };
+  
 
   return {
     users,

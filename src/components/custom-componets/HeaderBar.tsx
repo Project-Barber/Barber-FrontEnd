@@ -38,9 +38,11 @@ export function HeaderBar() {
             Cadastre-se
           </button>
         </Link>
+        <Link to={"/login"}>
         <Button className="w-28 text-white bg-[#7B1216] hover:bg-[#7b1215dc] hover:cursor-pointer hover:text-gray-300 select-none">
           Login
         </Button>
+        </Link>
       </div>
 
       {/* Mobile Sidebar */}
