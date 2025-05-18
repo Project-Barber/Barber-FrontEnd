@@ -94,7 +94,7 @@ const Cadastro: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-center items-center h-full py-6 bg-white select-none">
+    <div className="flex justify-center items-center h-full py-6 bg-white select-none mt-22 ">
       <Toaster position="top-right" />
 
       <Card className="flex flex-row h-[800px] shadow-md rounded-l-md">
