@@ -1,56 +1,157 @@
-import { useState } from "react";
-import api from "../apis/apiClient"; // Ajuste para o seu cliente API
-import { useUsersStore } from "../store/userStore"; // Se estiver usando Zustand ou Redux
-import { UserType } from "../types/users-type";
-import toast from "react-hot-toast";
+// src/hooks/useAuth.tsx
+import { useEffect, useCallback, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { create } from "zustand";
+import api from "../apis/apiClient";
+import { UserAuth } from "@/types/users-type";
+import { useUsersStore } from '@/store/userStore';
 
-export const useLogin = () => {
-  const { setUsers } = useUsersStore(); // Para atualizar o estado global, se necessário
+
+// Tipagem do estado de autenticação
+interface AuthState {
+  user: UserAuth | null;
+  setUser: (user: UserAuth) => void;
+  clearUser: () => void;
+}
+
+// Store Zustand para gerenciamento de estado global
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  setUser: (user: UserAuth) => set({ user }),
+  clearUser: () => set({ user: null }),
+}));
+
+// Hook principal de autenticação
+export const useAuth = () => {
+  const { user, setUser, clearUser } = useAuthStore();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Função para login
-  const loginUser = async (email: string, password: string): Promise<void> => {
-    setLoading(true);
-    setError(null);
+  // Recupera dados do localStorage ao montar o componente
+  useEffect(() => {
+    const autoLogin = async () => {
+      const storedData = localStorage.getItem("authData");
+      if (storedData) {
+        try {
+          const parsedData: UserAuth = JSON.parse(storedData);
 
-    try {
-      const response = await api.post<{ token: string; user: UserType }>("/usuarios/login", {
-        email,
-        password,
-      });
+          // Verifica validade do token
+          if (parsedData.expiresAt && Date.now() > parsedData.expiresAt) {
+            logout();
+            return;
+          }
 
-      // Salva o token e os dados do usuário no estado global ou localStorage
-      localStorage.setItem("authToken", response.data.token); // Pode ser JWT
-      setUsers([response.data.user]); // Atualiza o estado global com os dados do usuário logado
+          // Valida o token com o backend
+          await api.get("/validate-token", {
+            headers: { Authorization: `Bearer ${parsedData.token}` },
+          });
 
-      toast.success("Login realizado com sucesso!");
-    } catch (err) {
-      console.error(err);
-      setError("E-mail ou senha inválidos");
-      toast.error("Erro ao fazer login. Tente novamente.");
-    } finally {
-      setLoading(false);
+          setUser(parsedData);
+        } catch (err) {
+          console.error("Falha no auto-login:", err);
+          logout();
+        }
+      }
+    };
+
+    autoLogin();
+  }, [setUser]);
+
+  // Função de login
+  const login = useCallback(
+    async (email: string, senha: string) => {
+      setLoading(true);
+      setError(null);
+  
+      try {
+        const response = await api.post("/usuarios/login", { email, senha });
+        const { token, tipo_usuario, expiresIn } = response.data;
+  
+        const authData: UserAuth = {
+          email,
+          token,
+          role: tipo_usuario, // Armazenando o role
+          expiresAt: Date.now() + (expiresIn || 3600) * 1000, // Default 1 hora
+        };
+  
+        // Armazena dados no localStorage
+        localStorage.setItem("authData", JSON.stringify(authData));
+        useUsersStore.getState().setUsers([{ email, role: tipo_usuario }]); // Atualiza com o novo usuário logado
+        setUser(authData);
+        // Atualiza estado global
+        setUser(authData);
+  
+        // Aqui está o console.log com role, token e email
+        console.log("Login bem-sucedido!");
+        console.log("Email:", email);
+        console.log("Role:", tipo_usuario);
+        console.log("Token:", token);
+  
+        // Verificando o valor de 'role' no localStorage
+        const storedData = localStorage.getItem("authData");
+        if (storedData) {
+          const parsedData: UserAuth = JSON.parse(storedData);
+          console.log("Role salvo no localStorage:", parsedData.role);  // Verifique se o 'role' foi salvo corretamente no localStorage
+        }
+  
+        // Redireciona
+        if (tipo_usuario === "admin") {
+          navigate("/admin", { replace: true });
+        } else if (tipo_usuario === "user") {
+          navigate("/user", { replace: true });
+        } else if (tipo_usuario === "barber") {
+          navigate("/barber", { replace: true });
+        } else {
+          navigate("/secretary", { replace: true });
+        }
+      } catch (err: any) {
+        const errorMessage = err.response?.data?.error || err.message || "Erro ao realizar login";
+        setError(errorMessage);
+        throw new Error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [navigate, setUser]
+  );
+  
+
+  // Função de logout
+  const logout = useCallback(() => {
+    // Limpa localStorage
+    localStorage.removeItem("authData");
+
+    // Limpa estado global
+    clearUser();
+
+    // Remove token dos headers do axios
+    delete api.defaults.headers.common["Authorization"];
+
+    // Redireciona para login
+    navigate("/login", { replace: true });
+  }, [clearUser, navigate]);
+
+  // Verifica autenticação
+  const isAuthenticated = useMemo(() => {
+    if (!user || !user.token) return false;
+
+    // Verifica expiração
+    if (user.expiresAt && Date.now() > user.expiresAt) {
+      logout();
+      return false;
     }
-  };
 
-  // Função para verificar se o usuário está autenticado
-  const isAuthenticated = () => {
-    return Boolean(localStorage.getItem("authToken"));
-  };
+    return true;
+  }, [user, logout]);
 
-  // Função para logout
-  const logoutUser = () => {
-    localStorage.removeItem("authToken");
-    setUsers([]); // Limpa o estado do usuário
-    toast.success("Você saiu da sua conta!");
-  };
-
+  // Retorno do hook
   return {
-    loginUser,
+    user,
     isAuthenticated,
-    logoutUser,
     loading,
     error,
+    login,
+    logout,
   };
 };

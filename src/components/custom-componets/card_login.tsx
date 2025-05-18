@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
-import { useLogin } from '../../hooks/useAuth' // Hook correto
+import { useAuth } from '../../hooks/useAuth'
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -34,17 +34,14 @@ const CardLogin: React.FC = () => {
     resolver: zodResolver(loginSchema),
   })
 
-  const { loginUser, loading } = useLogin() // Corrigido aqui
+  const { login, loading, error: authError } = useAuth()
   const [isVisible, setIsVisible] = useState(false)
 
   const onSubmit = async (data: FormData) => {
     try {
-      await loginUser(data.email, data.password) // Corrigido aqui
-      toast.success('Login realizado com sucesso!')
-      // Redirecionar para dashboard ou outra rota, se necessário
-      // Ex: router.push('/dashboard')
+      await login(data.email, data.password)
     } catch (error) {
-      toast.error('Erro ao realizar o login!')
+      toast.error(authError || 'Erro ao realizar o login!')
     }
   }
 
@@ -62,8 +59,8 @@ const CardLogin: React.FC = () => {
     <div className="flex justify-center items-center h-full py-6 bg-white select-none">
       <Toaster position="top-right" />
 
-      <Card className="flex flex-row h-full   shadow-md rounded-l-md">
-        <div className="w-[400px] h-full relative  hidden sm:flex">
+      <Card className="flex flex-row h-full shadow-md rounded-l-md">
+        <div className="w-[400px] h-full relative hidden sm:flex">
           <img
             src="src/assets/pexels-thgusstavo-2040189 1.png"
             alt="Imagem de fundo"
@@ -77,7 +74,7 @@ const CardLogin: React.FC = () => {
           />
         </div>
 
-        <div className="flex flex-col  px-6 py-6 w-[400px] max-w-[550px] h-full">
+        <div className="flex flex-col px-6 py-6 w-[400px] max-w-[550px] h-full">
           <CardHeader className="flex flex-col items-center text-center">
             <CardTitle className="text-lg font-bold py-3">Entrar</CardTitle>
             <CardDescription className="text-muted-foreground max-w-xs">
@@ -144,7 +141,7 @@ const CardLogin: React.FC = () => {
                 <Button
                   type="button"
                   className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100"
-                  onClick={() => handleSubmit(onSubmit, onError)()}
+                  onClick={() => toast.success('Google login não implementado ainda')}
                 >
                   <FcGoogle />
                   Entrar com Google

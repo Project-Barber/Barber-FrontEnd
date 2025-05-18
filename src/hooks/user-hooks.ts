@@ -1,6 +1,6 @@
 import api from "../apis/apiClient";
 import { useUsersStore } from "../store/userStore";
-import { UserType } from "../types/users-type";
+import { UserType,UserRegisterFuncionarioType  } from "../types/users-type";
 import { useState } from "react";
 
 export const useUsers = () => {
@@ -22,7 +22,7 @@ export const useUsers = () => {
     try {
       const response = await api.post<UserType>("/usuarios/cadastrar", user);
       create(response.data);
-      return response.data;
+      return { ...response.data, role: "barbeiro" };
     } catch (err) {
       setError("Erro ao criar usuário");
       return null;
@@ -30,7 +30,36 @@ export const useUsers = () => {
       setLoading(false);
     }
   };
+  const createUserBarbeiro = async (user: UserRegisterFuncionarioType): Promise<UserType | null> => {
+    setLoading(true);
+    setError(null);
 
+    try {
+      const response = await api.post<UserRegisterFuncionarioType>("/usuarios/cadastrar/barbeiro", user);
+      create(response.data);
+      return { ...response.data, role: "barbeiro" };
+    } catch (err) {
+      setError("Erro ao criar usuário");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+   const createUserSecretario = async (user: UserRegisterFuncionarioType): Promise<UserType | null> => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await api.post<UserRegisterFuncionarioType>("/usuarios/cadastrar/secretario", user);
+      create(response.data);
+      return { ...response.data, role: "secretario" };
+    } catch (err) {
+      setError("Erro ao criar usuário");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
   // Busca de usuários
   const getUsers = async () => {
     setLoading(true);
@@ -49,6 +78,8 @@ export const useUsers = () => {
 
   return {
     users,
+    createUserBarbeiro,
+    createUserSecretario,
     createUser,
     getUsers,
     getUserById,

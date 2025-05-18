@@ -1,11 +1,12 @@
-import { create } from 'zustand'
-import { UserType } from '@/types/users-type' 
+import { create } from 'zustand';
+import { UserType } from '@/types/users-type'; 
 
 interface userStoreProps {
-  users: UserType[]
-  create: (user: UserType) => void
-  setUsers: (users: UserType[]) => void
-  getUserById: (id: string) => UserType | null
+  users: Partial<UserType>[];
+  create: (user: Partial<UserType>) => void;
+  setUsers: (users: Partial<UserType>[]) => void;
+  getUserById: (id: string) => Partial<UserType> | null;
+  clearUsers: () => void;
 }
 
 export const useUsersStore = create<userStoreProps>((set, get) => ({
@@ -16,8 +17,10 @@ export const useUsersStore = create<userStoreProps>((set, get) => ({
   setUsers: (users) => set(() => ({ users })),
 
   getUserById: (id: string) => {
-    const state = get()
-    const user = state.users.find((user) => user.id === id)
-    return user ?? null
+    const state = get();
+    const user = state.users.find((user) => user?.id === id);
+    return user ?? null;
   },
-}))
+
+  clearUsers: () => set(() => ({ users: [] })),
+}));

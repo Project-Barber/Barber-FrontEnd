@@ -23,7 +23,7 @@ export function HeaderBar() {
 
       {/* Botão de abrir sidebar no mobile */}
       <div className="flex items-center gap-5 sm:hidden">
-        <Button onClick={toggleSidebar} className="bg-transparent text-white hover:text-gray-300">
+        <Button onClick={toggleSidebar} className="bg-transparent text-white hover:text-gray-300" >
           ☰
         </Button>
       </div>
