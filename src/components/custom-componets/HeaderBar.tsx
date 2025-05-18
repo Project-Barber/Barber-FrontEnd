@@ -23,7 +23,7 @@ export function HeaderBar() {
 
       {/* Botão de abrir sidebar no mobile */}
       <div className="flex items-center gap-5 sm:hidden">
-        <Button onClick={toggleSidebar} className="bg-transparent text-white hover:text-gray-300">
+        <Button onClick={toggleSidebar} className="bg-transparent text-white hover:text-gray-300" >
           ☰
         </Button>
       </div>
@@ -38,9 +38,11 @@ export function HeaderBar() {
             Cadastre-se
           </button>
         </Link>
+        <Link to={"/login"}>
         <Button className="w-28 text-white bg-[#7B1216] hover:bg-[#7b1215dc] hover:cursor-pointer hover:text-gray-300 select-none">
           Login
         </Button>
+        </Link>
       </div>
 
       {/* Mobile Sidebar */}

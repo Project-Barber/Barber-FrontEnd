@@ -70,6 +70,7 @@ const Cadastro: React.FC = () => {
           cidade: data.cidade,
           estado: data.estado,
         }),
+        role: 'cliente', 
       }
       const result = await createUser(userData)
       if (result) {
