@@ -2,9 +2,14 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import MobileSidebar from "./MobileSidebar";
+import { useAuth} from '@/hooks/useAuth'; 
+
 
 export function HeaderBar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+   const { isAuthenticated } = useAuth(); 
+   const { logout } = useAuth();
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -21,15 +26,14 @@ export function HeaderBar() {
         />
       </Link>
 
-      {/* Botão de abrir sidebar no mobile */}
       <div className="flex items-center gap-5 sm:hidden">
         <Button onClick={toggleSidebar} className="bg-transparent text-white hover:text-gray-300" >
           ☰
         </Button>
       </div>
 
-      {/* Botões normais em telas grandes */}
-      <div className="hidden sm:flex items-center gap-5">
+    {!isAuthenticated &&   
+      <div className={`hidden sm:flex items-center gap-5 `}>
         <button className="font-semibold hover:cursor-pointer text-white hover:text-gray-300 select-none">
           Sobre
         </button>
@@ -44,8 +48,19 @@ export function HeaderBar() {
           </Button>
         </Link>
       </div>
+      }
+      {isAuthenticated && 
+            <div className={`hidden sm:flex items-center gap-5 `}>
+       
+        
+       
+          <Button onClick={logout} className="w-28 text-white bg-[#7B1216] hover:bg-[#7b1215dc] hover:cursor-pointer hover:text-gray-300 select-none">
+            Sair
+          </Button>
+        
+      </div>
+}
 
-      {/* Mobile Sidebar */}
       <MobileSidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
     </div>
   );

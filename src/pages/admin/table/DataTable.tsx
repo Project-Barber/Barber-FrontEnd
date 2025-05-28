@@ -3,20 +3,32 @@ import {
   getCoreRowModel,
   useReactTable,
   ColumnDef,
-} from "@tanstack/react-table"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  onRowClick?: (rowData: TData) => void;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  onRowClick,
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-  })
+  });
 
   return (
     <div className="rounded-md border">
@@ -28,7 +40,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </TableHead>
               ))}
             </TableRow>
@@ -37,10 +52,17 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow
+                key={row.id}
+                onClick={() => onRowClick?.(row.original)}
+                className="cursor-pointer hover:bg-muted"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
                   </TableCell>
                 ))}
               </TableRow>
@@ -55,5 +77,5 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

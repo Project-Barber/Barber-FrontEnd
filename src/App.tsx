@@ -10,7 +10,7 @@ import BarberDashboard from './pages/barber';
 import { useAuth } from '@/hooks/useAuth'; // Importando o hook de autenticação
 
 function App() {
-  const { isAuthenticated } = useAuth(); // Verifica se o usuário está autenticado
+  const { isAuthenticated } = useAuth(); 
 
   return (
     <>
@@ -25,7 +25,7 @@ function App() {
             <Route path="/register" element={<Cadastro />} />
             <Route path="/login" element={<Login />} />
 
-            {/* Verifica se o usuário está autenticado antes de acessar as rotas protegidas */}
+            
             <Route
               path="/secretary/*"
               element={isAuthenticated ? <SecretaryDashboard /> : <Navigate to="/login" replace />}

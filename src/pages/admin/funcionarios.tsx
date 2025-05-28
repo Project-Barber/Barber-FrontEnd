@@ -6,6 +6,17 @@ import ToggleButton from '@/components/custom-componets/switch';
 import { Button } from '@/components/ui/button'
 import Register_funcionario from '@/pages/admin/register_funcionarios';
 import { MdOutlineArrowBack } from "react-icons/md";
+import {
+    Drawer,
+    DrawerTrigger,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+    DrawerClose,
+    DrawerFooter
+} from "@/components/ui/drawer";
+
 
 
 type Funcionario = {
@@ -82,6 +93,11 @@ export const columns: ColumnDef<Funcionario>[] = [
 const Funcionarios: React.FC = () => {
     const [tipo, setTipo] = useState<"barbeiros" | "secretarios">("barbeiros");
     const [showForm, setShowForm] = useState(false);
+    const [selectedFuncionario, setSelectedFuncionario] = useState<Funcionario | null>(null);
+
+    const handleRowClick = (funcionario: Funcionario) => {
+        setSelectedFuncionario(funcionario);
+    };
 
     const handleToggleChange = (value: "barbeiros" | "secretarios") => {
         setTipo(value);
@@ -104,31 +120,61 @@ const Funcionarios: React.FC = () => {
     };
 
     return (
-        <div className="p-4 space-y-4">
+        <div className="p-4 space-y-4 max-w-full overflow-auto">
             {showForm && (
                 <div>
                     <Button onClick={() => setShowForm(false)} variant="ghost" className='cursor-pointer fixed'>
                         <MdOutlineArrowBack />
                         Voltar
                     </Button>
-
-
                     <Register_funcionario />
                 </div>
             )}
             {!showForm && (
                 <>
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-4 sm:flex-coll">
                         <ToggleButton value={tipo} onChange={handleToggleChange} />
                         <Button variant="outline" className="ml-auto cursor-pointer" onClick={handleAddFuncionario}>
                             Adicionar Funcionário
                         </Button>
                     </div>
                     <div>
-                        <DataTable columns={columns} data={filteredData} />
+                        <DataTable
+                            columns={columns}
+                            data={filteredData}
+                            onRowClick={handleRowClick}
+                        />
+
                     </div>
                 </>
             )}
+            {selectedFuncionario && (
+                <Drawer open={!!selectedFuncionario} onOpenChange={(open) => !open && setSelectedFuncionario(null)}>
+                    <DrawerContent>
+                        <div className="mx-auto w-full max-w-sm">
+                            <DrawerHeader>
+                                <DrawerTitle>Detalhes do Funcionário</DrawerTitle>
+                                <DrawerDescription>Informações do Funcionário</DrawerDescription>
+                            </DrawerHeader>
+                            <div className="p-4">
+                                <p><strong>Nome:</strong> {selectedFuncionario.nome}</p>
+                                <p><strong>Cargo:</strong> {selectedFuncionario.cargo}</p>
+                                <p><strong>Email:</strong> {selectedFuncionario.email}</p>
+                                <p><strong>Celular:</strong> {selectedFuncionario.cel}</p>
+                                <p><strong>Nascimento:</strong> {new Date(selectedFuncionario.data_nascimento).toLocaleDateString("pt-BR")}</p>
+                            </div>
+                            <DrawerFooter>
+                                <DrawerClose asChild>
+                                    <Button variant="outline" className='cursor-pointer'>Fechar</Button>
+                                </DrawerClose>
+                               
+
+                            </DrawerFooter>
+                        </div>
+                    </DrawerContent>
+                </Drawer>
+            )}
+
         </div>
     );
 };

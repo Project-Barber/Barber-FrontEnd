@@ -112,7 +112,7 @@ const Register_funcionario: React.FC = () => {
     setIsVisible((prev) => !prev)
   }
  
-  console.log('Role:', role)
+ 
   return (
     <div className="flex justify-center  items-center py-6 w-full select-none">
       <Toaster position="top-right" />
