@@ -40,7 +40,7 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             </Link>
             <Link to="/login" onClick={onClose}>
               <Button className="w-full text-white bg-[#7B1216] hover:bg-[#7b1215dc] select-none">
-                Login
+                Entrar
               </Button>
             </Link>
           </div>

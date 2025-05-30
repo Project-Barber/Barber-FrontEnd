@@ -17,6 +17,7 @@ import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
 import { MdVisibility, MdVisibilityOff } from 'react-icons/md'
 import { useAuth } from '../../hooks/useAuth'
+import { Link } from 'react-router-dom'
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -118,7 +119,7 @@ const CardLogin: React.FC = () => {
                 <button
                   onClick={handlePasswordVisibility}
                   type="button"
-                  className="absolute right-3 top-[30px]"
+                  className="absolute right-3 top-[30px] cursor-pointer"
                 >
                   {isVisible ? <MdVisibilityOff /> : <MdVisibility />}
                 </button>
@@ -132,7 +133,7 @@ const CardLogin: React.FC = () => {
               <div className="flex flex-col items-center py-7 space-y-0.5">
                 <Button
                   type="submit"
-                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white"
+                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white cursor-pointer"
                   disabled={loading}
                 >
                   {loading ? 'Entrando...' : 'Entrar'}
@@ -140,12 +141,17 @@ const CardLogin: React.FC = () => {
                 <h4>ou</h4>
                 <Button
                   type="button"
-                  className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100"
+                  className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100 cursor-pointer"
                   onClick={() => toast.success('Google login não implementado ainda')}
                 >
                   <FcGoogle />
                   Entrar com Google
                 </Button>
+                <Link to={'/register'}>
+                <Button variant="link" 
+                className="text-blue-500 hover:underline cursor-pointer"
+                >Não possui conta? click aqui</Button>
+                </Link>
               </div>
             </form>
           </CardContent>

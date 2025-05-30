@@ -7,7 +7,6 @@ const api = axios.create({
   baseURL: import.meta.env.API_BASE_URL || "http://localhost:3000",
 });
 
-// Adiciona interceptores para o token de autenticação (caso necessário)
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
