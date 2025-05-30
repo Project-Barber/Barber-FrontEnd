@@ -128,6 +128,7 @@ const Register_funcionario: React.FC = () => {
           <CardContent className="flex flex-col items-center  w-full h-[1010px] overflow-hidden">
             <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4 w-full">
 
+              {/* Inputs padrões */}
               {[
                 { id: 'name', label: 'Nome', placeholder: 'Seu nome' },
                 { id: 'email', label: 'E-mail', placeholder: 'Seu e-mail' },
@@ -158,7 +159,7 @@ const Register_funcionario: React.FC = () => {
                     <button
                       type="button"
                       onClick={handlePasswordVisibility}
-                      className="absolute right-3 top-7 text-xl text-black cursor-pointer"
+                      className="absolute right-3 top-7 text-xl text-black"
                     >
                       {isVisible ? <MdVisibilityOff /> : <MdVisibility />}
                     </button>
@@ -173,6 +174,7 @@ const Register_funcionario: React.FC = () => {
               ))}
 
 
+              {/* Telefone */}
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="phone">Telefone</Label>
                 <Input
@@ -191,6 +193,7 @@ const Register_funcionario: React.FC = () => {
                 {errors.phone && <p className="text-xs text-red-500">{errors.phone.message}</p>}
               </div>
 
+              {/* Data de nascimento */}
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="date_of_birth">Data de Nascimento</Label>
                 <Input
@@ -210,6 +213,7 @@ const Register_funcionario: React.FC = () => {
                 )}
               </div>
 
+              {/* Função */}
               <div className="flex flex-col space-y-1.5">
                 <Label>Função</Label>
                 <Controller
@@ -237,10 +241,11 @@ const Register_funcionario: React.FC = () => {
                 {errors.role && <p className="text-xs text-red-500">{errors.role.message}</p>}
               </div>
 
+              {/* Botão */}
               <div className="flex flex-col items-center space-y-0.5">
                 <Button
                   type="submit"
-                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white cursor-pointer"
+                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white"
                   disabled={loading}
                 >
                   {loading ? 'Carregando...' : 'Cadastre-se'}

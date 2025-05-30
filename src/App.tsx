@@ -7,10 +7,12 @@ import Login from './pages/login';
 import AdminDashboard from './pages/admin';
 import SecretaryDashboard from './pages/secretary';
 import BarberDashboard from './pages/barber';
-import { useAuth } from '@/hooks/useAuth'; // Importando o hook de autenticação
+import { useAuth } from '@/hooks/useAuth'; 
+import Agendamentos from "@/pages/agendamentos";
+
 
 function App() {
-  const { isAuthenticated } = useAuth(); // Verifica se o usuário está autenticado
+  const { isAuthenticated } = useAuth(); 
 
   return (
     <>
@@ -24,8 +26,9 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/register" element={<Cadastro />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/scheduling" element={<Agendamentos/>} />
 
-            {/* Verifica se o usuário está autenticado antes de acessar as rotas protegidas */}
+            
             <Route
               path="/secretary/*"
               element={isAuthenticated ? <SecretaryDashboard /> : <Navigate to="/login" replace />}

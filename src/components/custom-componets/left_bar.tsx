@@ -6,7 +6,7 @@ import { CiCalendar } from "react-icons/ci";
 
 interface LeftBarProps {
   role?: 'admin' | 'barber' | 'secretary' | 'user'; 
-  onSelect?: (selected: string) => void; // função para repassar o botão clicado
+  onSelect?: (selected: string) => void; 
 }
 
 const LeftBar: React.FC<LeftBarProps> = ({ role, onSelect }) => {
@@ -14,7 +14,7 @@ const LeftBar: React.FC<LeftBarProps> = ({ role, onSelect }) => {
 
   const handleClick = (label: string) => {
     setSelected(label);
-    onSelect?.(label); // chama o callback se estiver definido
+    onSelect?.(label); 
   };
 
   if (!role) {
@@ -22,25 +22,25 @@ const LeftBar: React.FC<LeftBarProps> = ({ role, onSelect }) => {
     return null;
   }
 
-  const buttonClass = "w-full justify-start hover:text-[#ffff] text-[#ffff] bg-[#393535]  cursor-pointer";
+const buttonClass = "w-full justify-start px-2 py-2 hover:text-white text-white bg-[#393535] cursor-pointer flex items-center gap-2 rounded";
 
   return (
-    <div className="flex flex-col w-[250px] h-screen bg-[#393535] shadow-md p-4 space-y-3">
+    <div className="flex flex-col w-full sm:w-[250px] h-screen bg-[#393535] shadow-md py-4 space-y-3">
       {(role === 'admin' || role === 'secretary') && (
         <>
-          <Button className={buttonClass} onClick={() => handleClick("Agendamentos")}>
-            <CiCalendar /> Agendamentos
+          <Button className={buttonClass + " text-sm sm:text-base"} onClick={() => handleClick("Agendamentos")}>
+            <CiCalendar  /> Agendamentos
           </Button>
 
           {role === 'admin' && (
             <>
-              <Button className={buttonClass} onClick={() => handleClick("Funcionários")}>
+              <Button className={buttonClass + " text-sm sm:text-base"} onClick={() => handleClick("Funcionários")}>
                 <TbUsers /> Funcionários
               </Button>
-              <Button className={buttonClass} onClick={() => handleClick("Finanças")}>
+              <Button className={buttonClass + " text-sm sm:text-base"} onClick={() => handleClick("Finanças")}>
                 <BiMoneyWithdraw /> Finanças
               </Button>
-              <Button className={buttonClass} onClick={() => handleClick("Clientes")}>
+              <Button className={buttonClass + " text-sm sm:text-base"} onClick={() => handleClick("Clientes")}>
                 <TbUsers /> Clientes
               </Button>
             </>
@@ -49,13 +49,13 @@ const LeftBar: React.FC<LeftBarProps> = ({ role, onSelect }) => {
       )}
 
       {role === 'barber' && (
-        <Button className={buttonClass} onClick={() => handleClick("VerAgendamentos")}>
+        <Button className={buttonClass + " text-sm sm:text-base"} onClick={() => handleClick("VerAgendamentos")}>
           <CiCalendar /> Ver Agendamentos
         </Button>
       )}
 
       {role === 'user' && (
-        <Button className={buttonClass} onClick={() => handleClick("MeusAgendamentos")}>
+        <Button className={buttonClass + " text-sm sm:text-base"} onClick={() => handleClick("MeusAgendamentos")}>
           <CiCalendar /> Meus Agendamentos
         </Button>
       )}
