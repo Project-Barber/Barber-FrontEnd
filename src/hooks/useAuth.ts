@@ -7,28 +7,24 @@
   import { useUsersStore } from '@/store/userStore';
 
 
-  // Tipagem do estado de autenticação
   interface AuthState {
     user: UserAuth | null;
     setUser: (user: UserAuth) => void;
     clearUser: () => void;
   }
 
-  // Store Zustand para gerenciamento de estado global
   export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     setUser: (user: UserAuth) => set({ user }),
     clearUser: () => set({ user: null }),
   }));
 
-  // Hook principal de autenticação
   export const useAuth = () => {
     const { user, setUser, clearUser } = useAuthStore();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Recupera dados do localStorage ao montar o componente
     useEffect(() => {
       const autoLogin = async () => {
         const storedData = localStorage.getItem("authData");
@@ -36,13 +32,11 @@
           try {
             const parsedData: UserAuth = JSON.parse(storedData);
 
-            // Verifica validade do token
             if (parsedData.expiresAt && Date.now() > parsedData.expiresAt) {
               logout();
               return;
             }
 
-            // Valida o token com o backend
             await api.get("/validate-token", {
               headers: { Authorization: `Bearer ${parsedData.token}` },
             });
@@ -58,7 +52,6 @@
       autoLogin();
     }, [setUser]);
 
-    // Função de login
     const login = useCallback(
       async (email: string, senha: string) => {
         setLoading(true);
@@ -71,29 +64,25 @@
           const authData: UserAuth = {
             email,
             token,
-            role: tipo_usuario, // Armazenando o role
-            expiresAt: Date.now() + (expiresIn || 3600) * 1000, // Default 1 hora
+            role: tipo_usuario, 
+            expiresAt: Date.now() + (expiresIn || 3600) * 1000, 
           };
     
-          // Armazena dados no localStorage
           localStorage.setItem("authData", JSON.stringify(authData));
-          useUsersStore.getState().setUsers([{ email, role: tipo_usuario }]); // Atualiza com o novo usuário logado
+          useUsersStore.getState().setUsers([{ email, role: tipo_usuario }]);
           setUser(authData);
-          // Atualiza estado global
           setUser(authData);
     
-          // Aqui está o console.log com role, token e email
           console.log("Login bem-sucedido!");
         
     
-          // Verificando o valor de 'role' no localStorage
           const storedData = localStorage.getItem("authData");
           if (storedData) {
             const parsedData: UserAuth = JSON.parse(storedData);
-            console.log("Role salvo no localStorage:", parsedData.role);  // Verifique se o 'role' foi salvo corretamente no localStorage
+            console.log("Role salvo no localStorage:", parsedData.role);
           }
     
-          // Redireciona
+          
           if (tipo_usuario === "admin") {
             navigate("/admin", { replace: true });
           } else if (tipo_usuario === "user") {
@@ -117,24 +106,18 @@
 
     // Função de logout
     const logout = useCallback(() => {
-      // Limpa localStorage
       localStorage.removeItem("authData");
 
-      // Limpa estado global
       clearUser();
 
-      // Remove token dos headers do axios
       delete api.defaults.headers.common["Authorization"];
 
-      // Redireciona para login
       navigate("/login", { replace: true });
     }, [clearUser, navigate]);
 
-    // Verifica autenticação
     const isAuthenticated = useMemo(() => {
       if (!user || !user.token) return false;
 
-      // Verifica expiração
       if (user.expiresAt && Date.now() > user.expiresAt) {
         logout();
         return false;
@@ -143,7 +126,6 @@
       return true;
     }, [user, logout]);
 
-    // Retorno do hook
     return {
       user,
       isAuthenticated,

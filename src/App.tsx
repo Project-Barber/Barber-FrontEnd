@@ -7,7 +7,9 @@ import Login from './pages/login';
 import AdminDashboard from './pages/admin';
 import SecretaryDashboard from './pages/secretary';
 import BarberDashboard from './pages/barber';
-import { useAuth } from '@/hooks/useAuth'; // Importando o hook de autenticação
+import { useAuth } from '@/hooks/useAuth'; 
+import Agendamentos from "@/pages/agendamentos";
+
 
 function App() {
   const { isAuthenticated } = useAuth(); 
@@ -24,6 +26,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/register" element={<Cadastro />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/scheduling" element={<Agendamentos/>} />
 
             
             <Route

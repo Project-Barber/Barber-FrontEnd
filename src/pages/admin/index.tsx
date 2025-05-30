@@ -30,14 +30,12 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="flex  ">
-      {/* Menu lateral fixo */}
       <div className="w-[150px] sm:w-[250px] h-full shadow-md fixed left-0 top-20 bg-zinc-900 z-10">
-          <LeftBar role={role} onSelect={handleSelect}  />
+        <LeftBar role={role} onSelect={handleSelect} />
       </div>
 
-      {/* Conteúdo principal com margem esquerda */}
       <div className="ml-[150px] sm:ml-[250px] flex-1 p-6 overflow-y-hidden bg-[#ffff]">
-  {renderContent()}
+        {renderContent()}
       </div>
     </div>
   );

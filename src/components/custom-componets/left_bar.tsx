@@ -6,7 +6,7 @@ import { CiCalendar } from "react-icons/ci";
 
 interface LeftBarProps {
   role?: 'admin' | 'barber' | 'secretary' | 'user'; 
-  onSelect?: (selected: string) => void; // função para repassar o botão clicado
+  onSelect?: (selected: string) => void; 
 }
 
 const LeftBar: React.FC<LeftBarProps> = ({ role, onSelect }) => {
@@ -14,7 +14,7 @@ const LeftBar: React.FC<LeftBarProps> = ({ role, onSelect }) => {
 
   const handleClick = (label: string) => {
     setSelected(label);
-    onSelect?.(label); // chama o callback se estiver definido
+    onSelect?.(label); 
   };
 
   if (!role) {

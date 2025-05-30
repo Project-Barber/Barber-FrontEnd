@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label'
 import { FcGoogle } from 'react-icons/fc'
 import toast, { Toaster } from 'react-hot-toast'
 import { MdVisibility, MdVisibilityOff } from "react-icons/md"
-import { useUsers } from '../../hooks/user-hooks'
+import { useUsers } from '@/hooks/user-hooks'
 import { maskPhone, maskDate } from '@/utils/masks'
 
 
@@ -203,7 +203,7 @@ const Cadastro: React.FC = () => {
                 <button
                   onClick={handlePasswordVisibility}
                   type="button"
-                  className="absolute right-3 top-[30px]"
+                  className="absolute right-3 top-[30px] cursor-pointer"
                 >
                   {isVisible ? <MdVisibilityOff /> : <MdVisibility />}
                 </button>
@@ -212,14 +212,14 @@ const Cadastro: React.FC = () => {
               <div className="flex flex-col items-center space-y-0.5">
                 <Button
                   type="submit"
-                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white"
+                  className="w-full mt-4 bg-[#7B1216] hover:bg-[#7b1215dc] text-white cursor-pointer"
                 >
                   Cadastre-se
                 </Button>
                 <h4>ou</h4>
                 <Button
                   type="button"
-                  className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100"
+                  className="w-full mt-4 bg-white text-black border border-gray-300 hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleSubmit(onSubmit, onError)()}
                 >
                   <FcGoogle />

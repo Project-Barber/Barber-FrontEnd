@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../ui/button";
 import MobileSidebar from "./MobileSidebar";
 import { useAuth} from '@/hooks/useAuth'; 
+import { LogIn } from "lucide-react";
 
 
 export function HeaderBar() {
@@ -44,7 +45,8 @@ export function HeaderBar() {
         </Link>
         <Link to={"/login"}>
           <Button className="w-28 text-white bg-[#7B1216] hover:bg-[#7b1215dc] hover:cursor-pointer hover:text-gray-300 select-none">
-            Login
+            Entrar
+            <LogIn/>
           </Button>
         </Link>
       </div>
