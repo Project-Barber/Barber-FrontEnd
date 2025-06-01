@@ -35,9 +35,11 @@ export function HeaderBar() {
 
     {!isAuthenticated &&   
       <div className={`hidden sm:flex items-center gap-5 `}>
-        <button className="font-semibold hover:cursor-pointer text-white hover:text-gray-300 select-none">
-          Sobre
-        </button>
+        <Link to={"/scheduling"}>
+          <button className="font-semibold hover:cursor-pointer text-white hover:text-gray-300 select-none">
+            Agendar
+          </button>
+        </Link>
         <Link to={"/register"}>
           <button className="font-semibold hover:cursor-pointer text-white hover:text-gray-300 select-none">
             Cadastre-se

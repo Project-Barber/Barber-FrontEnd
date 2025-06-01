@@ -24,7 +24,6 @@ type Funcionario = {
   email: string;
   telefone: string;
   data_nascimento: string;
-  descricao?: string;
 };
 
 export const columns: ColumnDef<Funcionario>[] = [
@@ -39,11 +38,10 @@ export const columns: ColumnDef<Funcionario>[] = [
       const data = new Date(row.getValue("data_nascimento"));
       return data.toLocaleDateString("pt-BR");
     }
-  },
- 
+  }
 ];
 
-const Funcionarios: React.FC = () => {
+const Client: React.FC = () => {
   const [tipo, setTipo] = useState<"barbeiros" | "secretarios">("barbeiros");
   const [showForm, setShowForm] = useState(false);
   const [selectedFuncionario, setSelectedFuncionario] = useState<Funcionario | null>(null);
@@ -73,32 +71,18 @@ useEffect(() => {
     setSelectedFuncionario(funcionario);
   };
 
-  const handleToggleChange = (value: "barbeiros" | "secretarios") => {
-    setTipo(value);
-  };
-
-  function removeAccents(str: string) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  }
+ 
 
 const filteredData = useMemo(() => {
-  if (tipo === "barbeiros") {
-    return data.filter(func =>
-      func.tipo_usuario && func.tipo_usuario.toLowerCase().includes("barber")
-    );
-  } else {
-    return data.filter(func =>
-      func.tipo_usuario && func.tipo_usuario.toLowerCase().includes("secretary")
-    );
-  }
-}, [tipo, data]);
+  return data.filter(func =>
+    func.tipo_usuario && func.tipo_usuario.toLowerCase().includes("user")
+  );
+}, [data]);
 
 
 
 
-  const handleAddFuncionario = () => {
-    setShowForm(true);
-  };
+
 
   return (
     <div className="p-4 space-y-4 max-w-full overflow-auto">
@@ -114,12 +98,7 @@ const filteredData = useMemo(() => {
 
       {!showForm && (
         <>
-          <div className="flex items-center space-x-4 sm:flex-coll">
-            <ToggleButton value={tipo} onChange={handleToggleChange} />
-            <Button variant="outline" className="ml-auto cursor-pointer" onClick={handleAddFuncionario}>
-              Adicionar Funcionário
-            </Button>
-          </div>
+         
 
           {loading &&  <div> <LoaderCircle className='animate-spin'/>
           <p>Carregando usuários...</p></div>}
@@ -149,8 +128,6 @@ const filteredData = useMemo(() => {
                 <p><strong>Email:</strong> {selectedFuncionario.email}</p>
                 <p><strong>Celular:</strong> {selectedFuncionario.telefone}</p>
                 <p><strong>Nascimento:</strong> {new Date(selectedFuncionario.data_nascimento).toLocaleDateString("pt-BR")}</p>
-                <p><strong>Descrição:</strong> {selectedFuncionario.descricao}</p>
-
               </div>
               <DrawerFooter>
                 <DrawerClose asChild>
@@ -165,4 +142,4 @@ const filteredData = useMemo(() => {
   );
 };
 
-export default Funcionarios;
+export default Client;
