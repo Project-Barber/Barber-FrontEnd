@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MobileSidebarProps {
   isOpen: boolean;
@@ -8,7 +9,8 @@ interface MobileSidebarProps {
 }
 
 const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null; 
+  const { isAuthenticated, logout } = useAuth();
+  if (!isOpen) return null;
 
   return (
     <>
@@ -29,21 +31,38 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-6 items-center ">
-            <button className="text-base font-semibold text-white hover:text-gray-300 select-none">
-              Sobre
-            </button>
-            <Link to="/register" onClick={onClose}>
-              <button className="text-base font-semibold text-white hover:text-gray-300 select-none">
-                Cadastre-se
-              </button>
-            </Link>
-            <Link to="/login" onClick={onClose}>
-              <Button className="w-full text-white bg-[#7B1216] hover:bg-[#7b1215dc] select-none">
-                Entrar
+          {!isAuthenticated ? (
+            <div className="flex flex-col gap-6 items-center">
+              <Link to="/scheduling" onClick={onClose}>
+                <button className="text-base font-semibold text-white hover:text-gray-300 select-none">
+                  Agendar
+                </button>
+              </Link>
+              <Link to="/register" onClick={onClose}>
+                <button className="text-base font-semibold text-white hover:text-gray-300 select-none">
+                  Cadastre-se
+                </button>
+              </Link>
+              <Link to="/login" onClick={onClose}>
+                <Button className="w-full text-white bg-[#7B1216] hover:bg-[#7b1215dc] select-none">
+                  Entrar
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-6 items-center">
+              
+              <Button
+                onClick={() => {
+                  logout();
+                  onClose();
+                }}
+                className="w-full text-white bg-[#7B1216] hover:bg-[#7b1215dc] select-none"
+              >
+                Sair
               </Button>
-            </Link>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </>

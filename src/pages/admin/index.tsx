@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LeftBar from '@/components/custom-componets/left_bar';
 import { useUsersStore } from '@/store/userStore';
 import Funcionarios from './funcionarios.tsx';
-
+import Client from './client.tsx';
 const AdminDashboard: React.FC = () => {
   const { users } = useUsersStore();
   const [selectedButton, setSelectedButton] = useState<string>('');
@@ -22,7 +22,7 @@ const AdminDashboard: React.FC = () => {
       case 'finanças':
         return <div>💰 Componente de Finanças</div>;
       case 'clientes':
-        return <div>👥 Componente de Clientes</div>;
+        return <Client />;
       default:
         return <div className="text-gray-500 text-xl p-4">Selecione uma opção no menu ao lado</div>;
     }
