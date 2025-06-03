@@ -49,35 +49,43 @@ const Client: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-useEffect(() => {
-  const fetchUsuarios = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get('/usuarios/exibir');  
-      setData(response.data.usuarios); 
-    } catch (err: any) {
-      setError(err.message || 'Erro desconhecido');
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchUsuarios();
-}, []);
+  useEffect(() => {
+    const controller = new AbortController();
 
+    const fetchUsuarios = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await api.get('/usuarios/exibir/todos', {
+          signal: controller.signal,
+          withCredentials: true
+        });
+        setData(response.data.usuarios);
+      } catch (err: any) {
+        if (err.code === 'ERR_CANCELED') return;
+        const errorMsg = err.response?.data?.error || err.message || 'Erro desconhecido';
+        setError(errorMsg);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchUsuarios();
+
+    return () => controller.abort();
+  }, []);
 
   const handleRowClick = (funcionario: Funcionario) => {
     setSelectedFuncionario(funcionario);
   };
 
- 
+  const filteredData = useMemo(() => {
+    return data.filter(func =>
+      func.tipo_usuario && func.tipo_usuario.toLowerCase().includes("user")
+    );
+  }, [data]);
 
-const filteredData = useMemo(() => {
-  return data.filter(func =>
-    func.tipo_usuario && func.tipo_usuario.toLowerCase().includes("user")
-  );
-}, [data]);
+  // ...restante do seu código (JSX)
 
 
 

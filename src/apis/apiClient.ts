@@ -1,23 +1,23 @@
-// src/apis/apiClient.ts
 import axios from "axios";
 
-axios.defaults.baseURL = import.meta.env.API_BASE_URL || "http://localhost:3000";
-
 const api = axios.create({
-  baseURL: import.meta.env.API_BASE_URL || "http://localhost:3000",
+  baseURL: "http://localhost:3000", // ou sua URL de API
+
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
+api.interceptors.request.use((config) => {
+  const authData = localStorage.getItem("authData");
+
+  if (authData) {
+    const token = JSON.parse(authData).token;
+    if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
   }
-);
+
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
 export default api;

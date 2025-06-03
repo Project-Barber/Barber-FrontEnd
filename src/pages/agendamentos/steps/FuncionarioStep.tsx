@@ -11,20 +11,29 @@ interface FuncionarioStepProps {
 export default function FuncionarioStep({ value, onChange }: FuncionarioStepProps) {
   const [barbeiros, setBarbeiros] = useState<Usuario[]>([]);
 
-  useEffect(() => {
-    const fetchBarbeiros = async () => {
-      try {
-        const response = await api.get('/usuarios/exibir');
-        const todosUsuarios: Usuario[] = response.data.usuarios;
-        const apenasBarbeiros = todosUsuarios.filter(user => user.tipo_usuario === 'barber');
-        setBarbeiros(apenasBarbeiros);
-      } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-      }
-    };
+useEffect(() => {
+  const fetchBarbeiros = async () => {
+    try {
+      const token = localStorage.getItem('token'); // ou de onde você guarda
+        console.log('[LOG] Token:', token);
+      const response = await api.get('/usuarios/exibir/todos', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-    fetchBarbeiros();
-  }, []);
+      const todosUsuarios: Usuario[] = response.data.usuarios;
+      const apenasBarbeiros = todosUsuarios.filter(user => user.tipo_usuario === 'barber');
+      setBarbeiros(apenasBarbeiros);
+
+    } catch (error) {
+      console.error('Erro ao buscar usuários:', error);
+    }
+  };
+
+  fetchBarbeiros();
+}, []);
+
 
   const handleSelecionar = (id: number) => {
     onChange(id.toString());

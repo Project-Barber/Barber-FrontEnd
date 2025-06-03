@@ -5,6 +5,7 @@
     import Dashboard from "@/pages/admin";
     import AdminDashboard from "@/pages/admin";
     import Agendamentos from "@/pages/agendamentos";
+import ClientPage from "@/pages/client";
 
     export const defaultRoutes = createBrowserRouter([
         {
@@ -26,6 +27,10 @@
         {
             path: "/Barber",
             element: <Dashboard />
+        },
+        {
+            path: "/client",
+            element: <ClientPage />
         },
         {
             path: "/scheduling",
