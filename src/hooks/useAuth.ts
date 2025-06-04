@@ -83,15 +83,19 @@
           }
     
           
-          if (tipo_usuario === "admin") {
-            navigate("/admin", { replace: true });
-          } else if (tipo_usuario === "user") {
-            navigate("/user", { replace: true });
-          } else if (tipo_usuario === "barber") {
-            navigate("/barber", { replace: true });
-          } else {
-            navigate("/secretary", { replace: true });
-          }
+         if (tipo_usuario === "admin") {
+  console.log("Redirecionando para /admin");
+  navigate("/admin", { replace: true });
+} else if (tipo_usuario === "user") {
+  console.log("Redirecionando para /user");
+  navigate("/user", { replace: true });
+} else if (tipo_usuario === "barber") {
+  console.log("Redirecionando para /barber");
+  navigate("/barber", { replace: true });
+} else {
+  console.log("Redirecionando para /secretary");
+  navigate("/secretary", { replace: true });
+}
         } catch (err: any) {
           const errorMessage = err.response?.data?.error || err.message || "Erro ao realizar login";
           setError(errorMessage);
