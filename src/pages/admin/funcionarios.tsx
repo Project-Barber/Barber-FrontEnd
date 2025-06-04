@@ -61,6 +61,8 @@ const Funcionarios: React.FC = () => {
   const [data, setData] = useState<Funcionario[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+const cookies = document.cookie;
+console.log(cookies);
 
 useEffect(() => {
   const controller = new AbortController();
@@ -111,9 +113,9 @@ useEffect(() => {
   const handleDeleteFuncionario = async () => {
     if (!funcionarioToDelete) return;
     try {
-      console.log("Deletando funcionário:", funcionarioToDelete.id);
-      await api.delete(`/usuarios/deletar/${funcionarioToDelete.id}`);
-      setData(prev => prev.filter(f => f.id !== funcionarioToDelete.id));
+      await api.delete(`/usuarios/deletar`, {
+        withCredentials: true, // 👈 ISSO é essencial pra enviar cookies
+      });
       setFuncionarioToDelete(null);
       setConfirmDeleteOpen(false);
       setSelectedFuncionario(null);

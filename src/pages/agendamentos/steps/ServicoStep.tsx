@@ -1,12 +1,89 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '@/apis/apiClient';
 
-const ServicoStep: React.FC = () => {
-    return (
-        <div>
-            <h2>Selecione o Serviço</h2>
-            {/* Conteúdo do passo de serviço aqui */}
-        </div>
-    );
+interface Servico {
+  id: string;
+  nome: string;
+}
+
+interface Props {
+  value: string[];
+  onChange: (val: string[]) => void;
+}
+
+const ServicoStep: React.FC<Props> = ({ value, onChange }) => {
+  const [servicos, setServicos] = useState<Servico[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchServicos = async () => {
+      try {
+        const response = await api.get('/agendamentos/services', {
+          withCredentials: true,
+        });
+        setServicos(response.data.services);
+      } catch (err) {
+        setError('Erro ao carregar serviços');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServicos();
+  }, []);
+
+  const handleCheckboxChange = (id: string) => {
+    if (value.includes(id)) {
+      onChange(value.filter(item => item !== id));
+    } else {
+      onChange([...value, id]);
+    }
+  };
+
+  if (loading) return <p>Carregando serviços...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
+  return (
+    <div className="w-full max-w-xl mx-auto">
+      <h2 className="font-semibold text-lg mb-3">Selecione os serviços:</h2>
+      <div className="border rounded-md overflow-hidden">
+        <table className="w-full text-sm text-left border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-4 py-2 w-12"></th>
+              <th className="px-4 py-2">Serviço</th>
+              <th className="px-4 py-2 w-8">...</th>
+            </tr>
+          </thead>
+          <tbody>
+            {servicos.map(servico => (
+              <tr key={servico.id} className="border-t">
+                <td className="px-4 py-2 text-center">
+                  <input
+                    type="checkbox"
+                    checked={value.includes(servico.id)}
+                    onChange={() => handleCheckboxChange(servico.id)}
+                    className="form-checkbox"
+                  />
+                </td>
+                <td className="px-4 py-2">{servico.nome}</td>
+                <td className="px-4 py-2 text-center">...</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-between items-center mt-4">
+        <p className="text-sm">
+          Serviços selecionados: <strong>{value.length}</strong>
+        </p>
+      </div>
+
+     
+    </div>
+  );
 };
 
 export default ServicoStep;

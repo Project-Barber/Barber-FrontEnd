@@ -37,7 +37,8 @@ useEffect(() => {
 
   const handleSelecionar = (id: number) => {
     onChange(id.toString());
-    console.log('[LOG] Selecionado:', id);
+    const barbeiroSelecionado = barbeiros.find(barbeiro => barbeiro.id === id);
+    console.log('[LOG] Selecionado:', barbeiroSelecionado?.email);
   };
 
   return (
